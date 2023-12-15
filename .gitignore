@@ -478,3 +478,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# no extension
+*. *
