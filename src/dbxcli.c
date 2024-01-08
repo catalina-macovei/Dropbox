@@ -145,7 +145,7 @@ char (*splitIntoCommands(char *input))[MAX_LENGTH] {        // poate fi refolosi
         count++;
         token = strtok(NULL, " ");
     }
-    
+
     commands[count][0] = '\0';  // adaug caract null la final
 
     return commands;
@@ -248,6 +248,14 @@ int main(int argc, char *argv[]) {
                     listDirectory(name);
                 }
                 free(name);
+
+                /*
+                
+                REMOVE THIS COMMENT:
+
+                ADD THE REST OF YOUR OPTIONS HERE !!!!!!!
+                
+                */
             }else if (option == '0') {
                 printf("\n!!! Exited from Dropbox\n");
                 break;
