@@ -17,25 +17,27 @@ long calculateSize(const char *path) {
     struct stat st;     // stat - o structura care contine info despre file
     long size = 0;
 
-    if (stat(path, &st) == 0) {
-        if (S_ISREG(st.st_mode)) {      // flag - daca e regular file
+    if (stat(path, &st) == 0)
+
+        if (S_ISREG(st.st_mode))       // flag - daca e regular file
             size = st.st_size;
-        } else if (S_ISDIR(st.st_mode)) {   // flag - daca e director
+
+        else if (S_ISDIR(st.st_mode)) {   // flag - daca e director
             DIR *dir = opendir(path);
+
             if (dir != NULL) {
                 struct dirent *entry;   // var struct dirent cu informatii caracteristice directorului
-                while ((entry = readdir(dir)) != NULL) {    // citeste toate intrarile in directoare/subdirectoare
+
+                while ((entry = readdir(dir)) != NULL)    // citeste toate intrarile in directoare/subdirectoare
                     if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) { // '.' dir curent,'..' parinte director
                         char filePath[1024];
                         snprintf(filePath, sizeof(filePath), "%s/%s", path, entry->d_name); // verific filepath, base case
                         size += calculateSize(filePath);  // apel recursiv de calculare dimensiunii in baza filepathului construit
                     }
-                }
+                
                 closedir(dir);
             }
         }
-    }
-
     return size;
 }
 
@@ -62,18 +64,20 @@ int searchDirectory(const char *basePath, const char *item) {
     }
     if (dir != NULL) {
         struct dirent *entry;
+
         while ((entry = readdir(dir)) != NULL) {
+            struct stat statbuf;
+
             char path[MAX_FILENAME_LENGTH];
             snprintf(path, sizeof(path), "%s/%s", basePath, entry->d_name);
 
-            struct stat statbuf;
-            if (stat(path, &statbuf) == 0) {
-                if (( strstr(entry->d_name, item) != NULL || strcmp(entry->d_name, item) == 0)) { // S_ISREG(statbuf.st_mode) &&
+            
+            if (stat(path, &statbuf) == 0) 
+                if (( strstr(entry->d_name, item) != NULL || strcmp(entry->d_name, item) == 0)) // S_ISREG(statbuf.st_mode) &&
                     printf("%s\n", path);
-                } else if (S_ISDIR(statbuf.st_mode) && strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-                    searchDirectory(path, item);
-                }
-            }
+
+                else if (S_ISDIR(statbuf.st_mode) && strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) 
+                    searchDirectory(path, item);   
         }
         closedir(dir);
     }
@@ -126,6 +130,7 @@ void display_menu() {
 char (*splitIntoCommands(char *input))[MAX_LENGTH] {        // poate fi refolosita pentru a face split la o linie de siruri de carctere
 
     char (*commands)[MAX_LENGTH] = malloc(MAX_LENGTH * sizeof(*commands));
+
     if (commands == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(EXIT_FAILURE);
@@ -133,13 +138,14 @@ char (*splitIntoCommands(char *input))[MAX_LENGTH] {        // poate fi refolosi
 
     char *token;
     int count = 0;
-
     token = strtok(input, " ");
+
     while (token != NULL && count < MAX_LENGTH - 1) {
         strcpy(commands[count], token);
         count++;
         token = strtok(NULL, " ");
     }
+    
     commands[count][0] = '\0';  // adaug caract null la final
 
     return commands;
@@ -215,7 +221,6 @@ int main(int argc, char *argv[]) {
                     strcpy(path, commands[1]);
                     strcpy(item, commands[2]);    
                 } else {
-                    //printf("Usage: %s <directory_path> <item>\n", argv[0]);
                     fprintf(stderr, "Malloc!\n");
                     exit(1);
                 }
